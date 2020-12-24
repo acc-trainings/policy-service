@@ -1,0 +1,16 @@
+server:
+  port: 8080
+---
+spring:
+  profiles: local
+external:
+  services:
+    customer:
+      uri: http://localhost:8081/customer/
+---
+spring:
+  profiles: dev
+external:
+  services:
+    customer:
+      uri: http://localhost:8081/customer/
