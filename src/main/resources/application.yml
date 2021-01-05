@@ -1,16 +1,19 @@
-server:
-  port: 8080
+# Below server port only useful in local development environment
+# server:
+#   port: 8080
 ---
 spring:
   profiles: local
 external:
   services:
     customer:
-      uri: http://localhost:8081/customer/
+      # uri: http://localhost:8081
+      uri: http://customer-service-vikas-demo.apps.azureneocp.neinnovation-ocp.com
 ---
 spring:
   profiles: dev
 external:
   services:
     customer:
-      uri: http://localhost:8081/customer/
+      # uri: http://localhost:8081
+      uri: http://customer-service-vikas-demo.apps.azureneocp.neinnovation-ocp.com
