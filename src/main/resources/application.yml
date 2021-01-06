@@ -8,7 +8,8 @@ external:
   services:
     customer:
       # uri: http://localhost:8081
-      uri: http://customer-service-vikas-demo.apps.azureneocp.neinnovation-ocp.com
+      # uri: http://customer-service-vikas-demo.apps.azureneocp.neinnovation-ocp.com
+      uri: https://customer-service
 ---
 spring:
   profiles: dev
@@ -16,4 +17,5 @@ external:
   services:
     customer:
       # uri: http://localhost:8081
-      uri: http://customer-service-vikas-demo.apps.azureneocp.neinnovation-ocp.com
+      # uri: http://customer-service-vikas-demo.apps.azureneocp.neinnovation-ocp.com
+      uri: https://customer-service
