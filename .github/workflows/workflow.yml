@@ -1,0 +1,60 @@
+name: Java CI
+
+on:
+  push:
+    branches: [ master ]
+    path-ignore:
+      - 'configurations/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Extract branch name
+        shell: bash
+        run: |
+          echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+          echo "##[set-output name=sha_short;]$(echo $(git rev-parse --short HEAD))"
+        id: extract_branch
+      - name: Set Constants
+        id: consts
+        run: |
+          echo ::set-output name=repo::$(echo ${GITHUB_REPOSITORY})
+          echo ::set-output name=sha_short::$(git rev-parse --short HEAD)
+          echo ::set-output name=image-name::$(echo quay.io/necloudnativetraining/policy-service})
+          echo ::set-output name=branch::${GITHUB_REF#refs/heads/}
+          echo ::set-output name=docker_repo::$(echo /necloudnativetraining/policy-service) 
+      - name: Build with Maven
+        env:
+          spring.profiles.active: 'local'
+        run: mvn clean install package
+      - name: Login to Podman
+        id: login
+        run:  |
+          echo ${{ steps.extract_branch.outputs.branch }}
+          echo ${{ steps.extract_branch.outputs.sha_short }}
+          podman login quay.io -u ${{ secrets.quay_username }} -p ${{ secrets.quay_password }}
+      - name: Build Image using Podman
+        run: |
+          podman build . -t quay.io/necloudnativetraining/policy-service:${{ steps.extract_branch.outputs.branch }} --cgroup-manager=cgroupfs
+      - name: Push Image to quay Registry
+        run: |
+            podman push quay.io/necloudnativetraining/policy-service:${{ steps.extract_branch.outputs.branch }}
+      - name: OpenShift Action
+        uses: redhat-developer/openshift-actions@v2.0
+        with:
+          # The URL of the Openshift cluster
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER_URL }}
+          # JSON with values to connect to the Openshift cluster
+          parameters: '{"username": "${{ secrets.OPENSHIFT_USER }}", "acceptUntrustedCerts": "true", "password":"${{ secrets.OPENSHIFT_PASSWORD }}"}'
+          # Oc command to be executed
+          cmd: |
+            'version'
+            'project necloudnativetraining-dev'
+            'tag --source=docker quay.io/necloudnativetraining/policy-service:${{ steps.extract_branch.outputs.branch }} necloudnativetraining-dev/policy-service:${{ steps.extract_branch.outputs.branch }}'
