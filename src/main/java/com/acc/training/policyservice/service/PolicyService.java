@@ -25,7 +25,7 @@ public class PolicyService {
         Customer customer = customerWebClient.get().uri("/customer/" + id).retrieve().bodyToMono(Customer.class)
                 .block();
         logger.info("customer retrieved : " + customer);
-        return new Policy("2001", "Auto", customer);
+        return new Policy("2001", "Auto", customer, "New Business");
     }
 
 }

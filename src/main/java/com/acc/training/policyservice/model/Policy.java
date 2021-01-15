@@ -5,14 +5,16 @@ public class Policy {
     private String policyId;
     private String policyType;
     private Customer customer;
+    private String policyStatus;
 
     public Policy() {
     }
 
-    public Policy(String policyId, String policyType, Customer customer) {
+    public Policy(String policyId, String policyType, Customer customer, String policyStatus) {
         this.policyId = policyId;
         this.policyType = policyType;
         this.customer = customer;
+        this.policyStatus = policyStatus;
     }
 
     public String getPolicyId() {
@@ -37,6 +39,14 @@ public class Policy {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public String getPolicyStatus() {
+        return policyStatus;
+    }
+
+    public void setPolicyStatus(String policyStatus) {
+        this.policyStatus = policyStatus;
     }
 
 }
